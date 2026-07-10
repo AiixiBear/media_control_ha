@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "連接 Local REST Media Player",
+        "description": "輸入本機伺服器的位址與埠號",
+        "data": {
+          "host": "主機位址 (IP 或網域)",
+          "port": "埠號",
+          "package_name": "預設 packageName"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "無法連線到伺服器,請確認位址與埠號是否正確",
+      "unknown": "發生未預期的錯誤"
+    },
+    "abort": {
+      "already_configured": "此裝置已經設定過了"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "輪詢間隔（秒）"
+        }
+      }
+    }
+  }
+}
