@@ -1,13 +1,13 @@
 """Constants for the Local REST Media Player integration."""
 
-DOMAIN = "local_rest_media_player"
+DOMAIN = "media_player_ha"
 
 CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_PACKAGE_NAME = "package_name"
 CONF_SCAN_INTERVAL = "scan_interval"
 
-DEFAULT_PORT = 8123
+DEFAULT_PORT = 8080
 DEFAULT_SCAN_INTERVAL = 5  # seconds
 DEFAULT_PACKAGE_NAME = "com.example.music"
 
