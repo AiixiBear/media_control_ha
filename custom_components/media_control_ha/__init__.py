@@ -9,8 +9,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .custom_components.media_control_ha.api import LocalMediaPlayerApiError, LocalMediaPlayerClient
-from .custom_components.media_control_ha.const import (
+from .api import LocalMediaPlayerApiError, LocalMediaPlayerClient
+from .const import (
     CONF_HOST,
     CONF_PORT,
     CONF_SCAN_INTERVAL,
