@@ -1,6 +1,6 @@
 """Constants for the Local REST Media Player integration."""
 
-DOMAIN = "media_player_ha"
+DOMAIN = "media_control_ha"
 
 CONF_HOST = "host"
 CONF_PORT = "port"
