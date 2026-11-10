@@ -1,30 +1,43 @@
 {
   "config": {
-    "step": {
-      "user": {
-        "title": "連接大便媒體控制App",
-        "description": "輸入手機的位址與埠號",
-        "data": {
-          "host": "位址 (IP 或網域)",
-          "port": "埠號",
-          "package_name": "預設 packageName"
-        }
-      }
+    "abort": {
+      "already_configured": "此裝置已經設定過了",
+      "reauth_successful": "重新驗證成功"
     },
     "error": {
       "cannot_connect": "無法連線到手機,請確認位址與埠號是否正確",
+      "invalid_auth": "密碼錯誤，或手機 App 有設密碼但這裡沒填。請確認 App「設定」裡的密碼",
       "unknown": "發生未預期的錯誤"
     },
-    "abort": {
-      "already_configured": "此裝置已經設定過了"
+    "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "密碼"
+        },
+        "description": "手機 App 的密碼可能已經更改。請輸入 {host} 上 App 目前的密碼。",
+        "title": "重新驗證"
+      },
+      "user": {
+        "data": {
+          "host": "位址 (IP 或網域)",
+          "package_name": "預設 packageName",
+          "password": "密碼（App 設定裡的密碼，留空代表沒設密碼）",
+          "port": "埠號"
+        },
+        "description": "輸入手機的位址與埠號。如果 App 有設定密碼（App 1.1.0+ 的「設定」頁面），請在這裡輸入同一組密碼；沒設密碼就留空。",
+        "title": "連接大便媒體控制App"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
+          "password": "密碼（留空代表 App 沒設密碼）",
           "scan_interval": "輪詢間隔（秒）"
-        }
+        },
+        "description": "更改 App 密碼後，請在這裡同步更新密碼，否則會一直收到 401 驗證失敗。",
+        "title": "選項"
       }
     }
   }
