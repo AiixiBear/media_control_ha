@@ -22,7 +22,11 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .api import LocalMediaPlayerApiError, LocalMediaPlayerClient
+from .api import (
+    LocalMediaPlayerApiError,
+    LocalMediaPlayerAuthError,
+    LocalMediaPlayerClient,
+)
 from .const import (
     ACTION_NEXT,
     ACTION_PAUSE,
@@ -263,6 +267,24 @@ class LocalRestMediaPlayer(CoordinatorEntity, MediaPlayerEntity):
         }
         try:
             await self._client.async_send_command(payload)
+        except LocalMediaPlayerAuthError as err:
+            _LOGGER.error(
+                "Authentication failed sending %s — the password in the "
+                "app may have changed; update it in the integration "
+                "options or re-authenticate: %s",
+                action,
+                err,
+            )
+            try:
+                self._entry.async_start_reauth(self.hass)
+            except Exception:  # noqa: BLE001
+                _LOGGER.debug("Could not start re-auth flow")
+            self._optimistic_state = None
+            self._optimistic_position_ms = None
+            self._optimistic_position_time = None
+            self._optimistic_state_set_at = None
+            self.async_write_ha_state()
+            return
         except LocalMediaPlayerApiError as err:
             _LOGGER.error("Failed to send %s: %s", action, err)
             # Roll back the optimistic guess since the command failed.
@@ -304,9 +326,12 @@ class LocalRestMediaPlayer(CoordinatorEntity, MediaPlayerEntity):
 
     async def async_media_seek(self, position: float) -> None:
         # HA gives position in seconds; the server expects milliseconds.
+        # Send both millisecond keys the server accepts (positionMs is
+        # checked first, seekPosition is the legacy key).
         position_ms = int(position * 1000)
         await self._async_send(
             ACTION_SEEK,
             optimistic_position_ms=position_ms,
+            positionMs=position_ms,
             seekPosition=position_ms,
         )
