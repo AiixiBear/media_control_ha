@@ -9,9 +9,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import LocalMediaPlayerApiError, LocalMediaPlayerClient
+from .api import (
+    LocalMediaPlayerApiError,
+    LocalMediaPlayerAuthError,
+    LocalMediaPlayerClient,
+)
 from .const import (
     CONF_HOST,
+    CONF_PASSWORD,
     CONF_PORT,
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
@@ -26,7 +31,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Local REST Media Player from a config entry."""
     session = async_get_clientsession(hass)
     client = LocalMediaPlayerClient(
-        session, entry.data[CONF_HOST], entry.data[CONF_PORT]
+        session,
+        entry.data[CONF_HOST],
+        entry.data[CONF_PORT],
+        password=entry.data.get(CONF_PASSWORD) or None,
     )
 
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
@@ -34,6 +42,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def _async_update_data():
         try:
             return await client.async_get_media_player_state()
+        except LocalMediaPlayerAuthError as err:
+            # The password changed in the app (or was set after setup):
+            # stop polling with a bad password and ask the user to
+            # re-authenticate instead of spamming the server.
+            _LOGGER.warning(
+                "Authentication failed for %s:%s — the password in the "
+                "app may have changed; starting re-auth: %s",
+                entry.data[CONF_HOST],
+                entry.data[CONF_PORT],
+                err,
+            )
+            try:
+                entry.async_start_reauth(hass)
+            except Exception:  # noqa: BLE001
+                _LOGGER.debug(
+                    "Could not start re-auth flow for %s", entry.entry_id
+                )
+            raise UpdateFailed(
+                "Authentication failed — check the password in the app"
+            ) from err
         except LocalMediaPlayerApiError as err:
             raise UpdateFailed(str(err)) from err
 
