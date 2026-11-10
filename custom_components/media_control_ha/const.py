@@ -4,6 +4,7 @@ DOMAIN = "media_control_ha"
 
 CONF_HOST = "host"
 CONF_PORT = "port"
+CONF_PASSWORD = "password"
 CONF_PACKAGE_NAME = "package_name"
 CONF_SCAN_INTERVAL = "scan_interval"
 
@@ -15,6 +16,7 @@ DEFAULT_PACKAGE_NAME = "com.example.music"
 API_PATH_CONFIG = "/api/home-assistant/config"
 API_PATH_MEDIA_PLAYER = "/api/home-assistant/media-player"
 API_PATH_MEDIA_PLAYER_COMMAND = "/api/home-assistant/media-player/command"
+API_PATH_AUTH_CHECK = "/api/auth/check"
 
 # --- Actions supported by the remote server (see its docs) ---
 ACTION_PLAY = "media_play"
