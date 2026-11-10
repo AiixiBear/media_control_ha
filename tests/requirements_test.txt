@@ -1,0 +1,6 @@
+homeassistant
+pytest-homeassistant-custom-component
+pytest-asyncio
+aiohttp
+async_timeout
+voluptuous
